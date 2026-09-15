@@ -3,284 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Origin / Earth — a scroll-driven journey from the Big Bang to modern Earth.">
-  <title>Origin / Earth — A Space Timeline</title>
+  <meta name="description" content="Deep Time Atlas — an interactive timeline from the Big Bang to humanity and the far future.">
+  <title>Deep Time Atlas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="starfield" aria-hidden="true"></canvas>
-  <div class="atmosphere atmosphere-one" aria-hidden="true"></div>
-  <div class="atmosphere atmosphere-two" aria-hidden="true"></div>
-
-  <header class="site-header">
-    <a class="wordmark" href="#origin" aria-label="Back to the beginning">ORIGIN<span>/EARTH</span></a>
-    <nav aria-label="Timeline sections">
-      <a href="#origin">Origin</a>
-      <a href="#solar">Solar system</a>
-      <a href="#earth">Earth</a>
-      <a href="#now">Now</a>
-    </nav>
-    <a class="source-link header-source" href="#sources">Sources ↗</a>
-  </header>
-
-  <aside class="timeline-meter" aria-label="Scroll progress">
-    <span class="meter-track"><i id="meter-fill"></i></span>
-    <span class="meter-label" id="meter-label">00 / 09</span>
-  </aside>
-
-  <main>
-    <section class="era era-hero is-active" id="origin" data-label="The beginning" data-count="00 / 09">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <p class="kicker">A SCROLLING COSMIC FIELD GUIDE</p>
-          <h1>Everything you know<br>was once <em>light.</em></h1>
-          <p class="lede">Travel 13.8 billion years in one scroll — from an impossibly hot beginning to a blue planet looking back at itself.</p>
-          <a class="launch" href="#big-bang">Begin the descent <span>↓</span></a>
-          <p class="microcopy">Scroll slowly. Each chapter has its own orbit.</p>
-        </div>
-
-        <div class="hero-orb" aria-hidden="true">
-          <span class="orb-core"></span>
-          <span class="orb-ring ring-one"></span>
-          <span class="orb-ring ring-two"></span>
-          <span class="orb-ring ring-three"></span>
-          <span class="orb-flare flare-one"></span>
-          <span class="orb-flare flare-two"></span>
-        </div>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="Reset the Deep Time Atlas"><span class="brand-mark">◌</span> DEEP TIME <i>ATLAS</i></a>
+      <nav class="preset-nav" aria-label="Timeline presets">
+        <button type="button" class="preset is-active" data-preset="all">All time</button>
+        <button type="button" class="preset" data-preset="earth">Earth & life</button>
+        <button type="button" class="preset" data-preset="human">Human story</button>
+        <button type="button" class="preset" data-preset="space">Space age</button>
+        <button type="button" class="preset" data-preset="future">Far future</button>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="icon-button" id="zoom-out" aria-label="Zoom out" data-tooltip="Zoom out">−</button>
+        <button type="button" class="icon-button" id="zoom-in" aria-label="Zoom in" data-tooltip="Zoom in">+</button>
       </div>
-      <div class="hero-footer"><span>13.8 BILLION YEARS AGO</span><span>NOW</span></div>
+    </header>
+
+    <section class="timeline-toolbar" aria-label="Timeline controls">
+      <div class="focus-readout">
+        <span class="eyebrow">YOU ARE EXPLORING</span>
+        <strong id="window-label" aria-live="polite">13.8 billion years ago — 7 billion years ahead</strong>
+      </div>
+      <div class="filters" role="group" aria-label="Filter timeline categories">
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="cosmos"><i></i> Cosmos</button>
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="earth"><i></i> Earth</button>
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="life"><i></i> Life</button>
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="human"><i></i> Humanity</button>
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="space"><i></i> Space</button>
+        <button type="button" class="filter is-on" aria-pressed="true" data-category="future"><i></i> Futures</button>
+      </div>
+      <p class="interaction-hint">Scroll to zoom · drag to pan · select an event</p>
     </section>
 
-    <section class="era" id="big-bang" data-label="Big Bang & inflation" data-count="01 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">01 — 13.8 BILLION YEARS AGO</p>
-          <h2>A beginning<br>without an <em>outside.</em></h2>
-          <p>The Big Bang describes the universe’s early hot, dense state and its expansion. In its first instants, space itself expanded extraordinarily fast — a period called inflation.</p>
-          <div class="fact-row">
-            <span>ONE SECOND</span>
-            <p>Light and particles filled a universe hotter than stars.</p>
+    <main class="workspace">
+      <section class="timeline-stage" id="timeline-stage" aria-label="Interactive deep time map">
+        <canvas id="timeline-canvas" tabindex="0" aria-label="An interactive timeline. Scroll to zoom, drag to pan, or select an event for its story." aria-describedby="canvas-help"></canvas>
+        <p class="canvas-help" id="canvas-help">The horizontal line moves from the early universe on the left toward the distant future on the right. Events become more detailed as you zoom in.</p>
+        <div class="stage-overlay">
+          <span id="scale-label">1 pixel = 22 million years</span>
+          <span class="legend"><b></b> Selected event</span>
+        </div>
+        <button class="reset-view" id="reset-view" type="button">Reset view ↺</button>
+      </section>
+
+      <aside class="detail-panel" aria-live="polite">
+        <div class="panel-scroll">
+          <p class="eyebrow" id="event-era">COSMIC ORIGIN</p>
+          <div class="event-visual visual-cosmic" id="event-visual" aria-hidden="true">
+            <span class="visual-orbit orbit-one"></span>
+            <span class="visual-orbit orbit-two"></span>
+            <span class="visual-core"></span>
+            <span class="visual-spark spark-one"></span>
+            <span class="visual-spark spark-two"></span>
+            <span class="visual-spark spark-three"></span>
           </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>“Before” the Big Bang is not a settled scientific question. This chapter shows the observable universe’s earliest known history, not an explosion into an empty room.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">NASA: The Universe’s History ↗</a>
-        </article>
-        <div class="scene big-bang-scene" aria-hidden="true">
-          <span class="burst-core"></span><span class="burst-ring r1"></span><span class="burst-ring r2"></span><span class="burst-ring r3"></span>
-          <span class="energy-line l1"></span><span class="energy-line l2"></span><span class="energy-line l3"></span><span class="energy-line l4"></span>
-          <span class="caption-chip">SPACE UNFOLDS</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era align-right" id="afterglow" data-label="The first light" data-count="02 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">02 — 380,000 YEARS LATER</p>
-          <h2>The first light<br>gets <em>loose.</em></h2>
-          <p>As the universe cooled, electrons joined atomic nuclei. Light could finally travel freely, leaving behind a faint all-sky afterglow we can still detect: the cosmic microwave background.</p>
-          <div class="fact-row">
-            <span>THE OLDEST LIGHT</span>
-            <p>It is a snapshot of the universe as an infant.</p>
+          <p class="event-date" id="event-date">13.8 BILLION YEARS AGO</p>
+          <h1 id="event-title">Big Bang & cosmic inflation</h1>
+          <p class="event-description" id="event-description"></p>
+          <div class="fact-box">
+            <span>WHY IT MATTERS</span>
+            <p id="event-fact"></p>
           </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>Tiny temperature variations in this ancient light became the seeds of later cosmic structure — places where gravity could gather matter.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">NASA: Recombination & the CMB ↗</a>
-        </article>
-        <div class="scene afterglow-scene" aria-hidden="true">
-          <span class="cmb-disc"></span><span class="cmb-noise noise-one"></span><span class="cmb-noise noise-two"></span><span class="cmb-grid"></span>
-          <span class="caption-chip">THE AFTERGLOW</span>
-        </div>
-      </div>
-    </section>
+          <div class="model-note" id="model-note" hidden><span>◌</span> A modeled future, not a certainty.</div>
+          <a class="reference-link" id="event-source" target="_blank" rel="noopener">Open scientific reference ↗</a>
 
-    <section class="era" id="stars" data-label="Cosmic dawn" data-count="03 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">03 — HUNDREDS OF MILLIONS OF YEARS LATER</p>
-          <h2>Darkness learns<br>to <em>spark.</em></h2>
-          <p>After a long dark age, gravity pulled gas into the first stars and galaxies. Their intense light began transforming the hydrogen fog between galaxies.</p>
-          <div class="fact-row">
-            <span>NEW ELEMENTS</span>
-            <p>Stars forged heavier elements that would one day become rocks, oceans, and us.</p>
+          <div class="nearby">
+            <div class="nearby-heading"><span>EVENTS IN THIS VIEW</span><b id="visible-count">0</b></div>
+            <div class="event-list" id="event-list"></div>
           </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>There is no photograph of the first star. This scene is an original visual interpretation of the process scientists reconstruct from light, models, and deep-space observations.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">NASA: Dark Ages & first stars ↗</a>
-        </article>
-        <div class="scene dawn-scene" aria-hidden="true">
-          <span class="dawn-cloud cloud-a"></span><span class="dawn-cloud cloud-b"></span><span class="dawn-star star-a"></span><span class="dawn-star star-b"></span><span class="dawn-star star-c"></span>
-          <span class="caption-chip">COSMIC DAWN</span>
         </div>
+      </aside>
+    </main>
+
+    <footer class="timeline-footer">
+      <label class="zoom-control" for="zoom-range">
+        <span>TIME SCALE</span>
+        <input id="zoom-range" type="range" min="0" max="1000" value="330" aria-label="Timeline zoom">
+        <span id="zoom-label">22M years / px</span>
+      </label>
+      <p><b>Past</b> is left. <b>Future</b> is right. Forecasts are marked with a ring.</p>
+      <a href="#sources" id="sources-button">Methods & sources</a>
+    </footer>
+
+    <dialog class="sources-dialog" id="sources">
+      <div>
+        <button type="button" class="dialog-close" id="close-sources" aria-label="Close sources">×</button>
+        <p class="eyebrow">METHODS & SOURCES</p>
+        <h2>A map of what is known —<br>and what is only projected.</h2>
+        <p>Dates are intentionally approximate, especially in the deep past. The timeline combines established milestones with visual interpretation. Future cards use published models and are explicitly labeled as uncertain.</p>
+        <ul>
+          <li><a href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">NASA — The Universe’s History ↗</a></li>
+          <li><a href="https://science.nasa.gov/astrobiology/learning-resources/alp/how-did-our-solar-system-form/" target="_blank" rel="noopener">NASA — How the Solar System Formed ↗</a></li>
+          <li><a href="https://science.nasa.gov/earth/facts/" target="_blank" rel="noopener">NASA — Earth Facts ↗</a></li>
+          <li><a href="https://science.nasa.gov/resource/planet-earth-through-the-ages/" target="_blank" rel="noopener">NASA — Planet Earth Through the Ages ↗</a></li>
+          <li><a href="https://humanorigins.si.edu/human-characteristics/humans-change-world" target="_blank" rel="noopener">Smithsonian — Humans Change the World ↗</a></li>
+          <li><a href="https://science.nasa.gov/missions/hubble/apocalypse-when-hubble-casts-doubt-on-certainty-of-galactic-collision/" target="_blank" rel="noopener">NASA — The uncertain future of Andromeda ↗</a></li>
+        </ul>
       </div>
-    </section>
-
-    <section class="era align-right" id="galaxy" data-label="Galaxies assemble" data-count="04 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">04 — BILLIONS OF YEARS OF ASSEMBLY</p>
-          <h2>Gravity draws<br>the first <em>maps.</em></h2>
-          <p>Stars gathered into galaxies, galaxies met and merged, and the universe became a web of luminous islands. One of those islands would become our Milky Way.</p>
-          <div class="fact-row">
-            <span>NOT A STILL LIFE</span>
-            <p>Galaxies grow through star formation, encounters, mergers, and time.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>Cosmic history is not evenly paced: the early universe changed radically in short intervals, then individual systems evolved over billions of years.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">NASA: Galaxies & cosmic structure ↗</a>
-        </article>
-        <div class="scene galaxy-scene" aria-hidden="true">
-          <span class="galaxy-core"></span><span class="galaxy-arm arm-a"></span><span class="galaxy-arm arm-b"></span><span class="galaxy-arm arm-c"></span><span class="galaxy-dust"></span>
-          <span class="caption-chip">A GALAXY IN MOTION</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era" id="solar" data-label="A star and its worlds" data-count="05 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">05 — 4.6 BILLION YEARS AGO</p>
-          <h2>A cloud becomes<br>a <em>solar system.</em></h2>
-          <p>A spinning cloud of gas and dust collapsed into a young Sun and a flattened disk. Small bodies collided, gathered, and became the planets, moons, asteroids, and comets we know.</p>
-          <div class="fact-row">
-            <span>99.8% OF THE MASS</span>
-            <p>The Sun holds nearly all of the solar system’s mass.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>The leftover fragments are valuable time capsules. Asteroids and comets preserve traces of the solar system’s earliest construction.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/astrobiology/learning-resources/alp/how-did-our-solar-system-form/" target="_blank" rel="noopener">NASA: How the solar system formed ↗</a>
-        </article>
-        <div class="scene solar-scene" aria-hidden="true">
-          <span class="sun"></span><span class="orbit orbit-a"><i></i></span><span class="orbit orbit-b"><i></i></span><span class="orbit orbit-c"><i></i></span><span class="orbit orbit-d"><i></i></span>
-          <span class="caption-chip">THE SOLAR NEBULA</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era align-right" id="earth" data-label="A violent young Earth" data-count="06 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">06 — 4.5 BILLION YEARS AGO</p>
-          <h2>A world of lava<br>finds its <em>moon.</em></h2>
-          <p>Earth formed from swirling material around the young Sun. It was hot, battered, and volcanic. A giant collision likely hurled debris into orbit; over time, that debris became the Moon.</p>
-          <div class="fact-row">
-            <span>NOT YET BLUE</span>
-            <p>Early Earth had no solid surface, oceans, or breathable air.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>The details of lunar formation are still being tested, but leading models share a colossal impact as part of the Moon’s origin story.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/moon/formation/" target="_blank" rel="noopener">NASA: Moon formation ↗</a>
-        </article>
-        <div class="scene earth-scene" aria-hidden="true">
-          <span class="earth-globe"></span><span class="earth-continent continent-a"></span><span class="earth-continent continent-b"></span><span class="lava-crack crack-a"></span><span class="lava-crack crack-b"></span>
-          <span class="moon"></span><span class="moon-trail"></span><span class="caption-chip">A NEW WORLD</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era" id="life" data-label="Life reshapes a planet" data-count="07 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">07 — 4.0 TO 2.5 BILLION YEARS AGO</p>
-          <h2>Small life changes<br>the <em>sky.</em></h2>
-          <p>Evidence suggests life was present on Earth by about 4 billion years ago. Much later, oxygen-producing microbes transformed the atmosphere in the Great Oxidation Event.</p>
-          <div class="fact-row">
-            <span>THE PLANET BREATHES</span>
-            <p>Oxygen altered chemistry, ecosystems, and the possible futures of life.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>Early life did not need an oxygen-rich atmosphere. The rise of oxygen is a long, complex story, recorded imperfectly in rocks and chemistry.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/astrobiology/learning-resources/alp/how-did-life-first-emerge-on-earth/" target="_blank" rel="noopener">NASA: How life first emerged ↗</a>
-        </article>
-        <div class="scene life-scene" aria-hidden="true">
-          <span class="ocean-glow"></span><span class="water-line w1"></span><span class="water-line w2"></span><span class="stromatolite s1"></span><span class="stromatolite s2"></span><span class="stromatolite s3"></span>
-          <span class="oxygen oxygen-a"></span><span class="oxygen oxygen-b"></span><span class="oxygen oxygen-c"></span><span class="caption-chip">OXYGEN RISES</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era align-right" id="change" data-label="A living, changing Earth" data-count="08 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">08 — 541 MILLION TO 66 MILLION YEARS AGO</p>
-          <h2>Life experiments<br>at <em>planetary scale.</em></h2>
-          <p>Complex life diversified in the oceans, forests remade the land, and dinosaurs dominated for more than 160 million years. Earth’s story is full of beginnings — and endings.</p>
-          <div class="fact-row">
-            <span>66 MILLION YEARS AGO</span>
-            <p>A mass extinction ended the age of non-avian dinosaurs and changed what came next.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>Evolution is not a ladder. It branches, vanishes, adapts, and begins again as environments change.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/resource/planet-earth-through-the-ages/" target="_blank" rel="noopener">NASA: Planet Earth through the ages ↗</a>
-        </article>
-        <div class="scene change-scene" aria-hidden="true">
-          <span class="prehistoric-sun"></span><span class="fern fern-a"></span><span class="fern fern-b"></span><span class="fern fern-c"></span><span class="meteor"></span><span class="meteor-tail"></span>
-          <span class="caption-chip">CHANGE IS CONSTANT</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="era" id="now" data-label="A planet that looks back" data-count="09 / 09">
-      <div class="era-inner">
-        <article class="era-copy">
-          <p class="kicker">09 — THE PRESENT MOMENT</p>
-          <h2>A blue world<br>looks <em>homeward.</em></h2>
-          <p>In a narrow slice of cosmic time, humans learned to read the sky and leave Earth’s surface. Satellites now help us study the very planet that made observers possible.</p>
-          <div class="fact-row">
-            <span>ONE SHARED HOME</span>
-            <p>The Earth we see today is one frame in a 4.5-billion-year transformation.</p>
-          </div>
-          <details>
-            <summary>Open a cosmic footnote <span>+</span></summary>
-            <p>The future is open. Every image of Earth from space is both a scientific record and a reminder that its atmosphere is thin, bright, and finite.</p>
-          </details>
-          <a class="source-link" href="https://science.nasa.gov/earth/facts/" target="_blank" rel="noopener">NASA: Earth facts ↗</a>
-        </article>
-        <div class="scene now-scene" aria-hidden="true">
-          <span class="modern-earth"></span><span class="cloud cloud-one"></span><span class="cloud cloud-two"></span><span class="orbit-line"></span>
-          <span class="satellite"><i></i><b></b><em></em></span><span class="caption-chip">HOME, FROM ORBIT</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="sources" id="sources">
-      <p class="kicker">FIELD NOTES</p>
-      <h2>Made of observation,<br><em>plus imagination.</em></h2>
-      <p>Every scene on this site is an original CSS illustration, not a literal reconstruction or photograph. Timeline dates are simplified for storytelling; the linked resources provide the scientific context and caveats.</p>
-      <div class="source-grid">
-        <a href="https://science.nasa.gov/universe/overview/" target="_blank" rel="noopener">Universe history <span>NASA ↗</span></a>
-        <a href="https://science.nasa.gov/astrobiology/learning-resources/alp/how-did-our-solar-system-form/" target="_blank" rel="noopener">Solar-system formation <span>NASA ↗</span></a>
-        <a href="https://science.nasa.gov/resource/planet-earth-through-the-ages/" target="_blank" rel="noopener">Earth through the ages <span>NASA ↗</span></a>
-        <a href="https://science.nasa.gov/astrobiology/learning-resources/alp/how-did-life-first-emerge-on-earth/" target="_blank" rel="noopener">The emergence of life <span>NASA ↗</span></a>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <span>ORIGIN / EARTH</span>
-    <span>SCROLL TO REPLAY THE UNLIKELY</span>
-    <a href="#origin">Return to the beginning ↑</a>
-  </footer>
-
+    </dialog>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
